@@ -29,11 +29,6 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 
 ### Creating a user
 
-    $userTokens = $client->createUser(array(
-      'email' => "email@example.com", // previously verified email, if applicable
-      'phone' => "+14155555555", // previously verified phone number, if applicable
-      'customerUid' => "interal_customer_uid", // ID for the user in internal database
-    ));
     user_tokens = client.create_user(
       email: 'email@example.com', // previously verified email, where applicable
       phone: '+14155555555', // previously verified phone number, where applicable
