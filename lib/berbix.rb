@@ -26,7 +26,6 @@ module Berbix
       end
       cli = Net::HTTP.new(uri.host, uri.port).tap do |http|
         http.use_ssl = true
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
       res = cli.request(req)
       code = res.code.to_i
