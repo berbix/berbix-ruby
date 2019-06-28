@@ -49,7 +49,7 @@ Supported options:
  * `environment` - Which environment the client uses, defaults to `:production`.
  * `http_client` - An optional override for the default HTTP client.
 
-##### `createTransaction(options): Tokens`
+##### `create_transaction(options): Tokens`
 
 Creates a transaction within Berbix to initialize the client SDK. Typically after creating
 a transaction, you will want to store the refresh token in your database associated with the
@@ -61,11 +61,11 @@ Supported options:
  * `phone` - Previously verified phone number for a user.
  * `customer_uid` - An ID or identifier for the user in your system.
 
-##### `fetchTransaction(tokens: Tokens): object`
+##### `fetch_transaction(tokens: Tokens): object`
 
 Fetches all of the information associated with the transaction. If the user has already completed the steps of the transaction, then this will include all of the elements of the transaction payload as described on the (Berbix developer docs)[https://developers.berbix.com].
 
-##### `refreshTokens(tokens: Tokens): void`
+##### `refresh_tokens(tokens: Tokens): void`
 
 This is typically not needed to be called explicitly as it will be called by the higher-level
 SDK methods, but can be used to get fresh client or access tokens.
