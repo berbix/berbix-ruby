@@ -4,7 +4,7 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 
 ## Installation
 
-    gem install berbix-ruby
+    gem install berbix
 
 ## Usage
 
