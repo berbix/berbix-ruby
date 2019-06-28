@@ -36,24 +36,32 @@ module Berbix
     end
   end
 
-  class UserTokens
-    attr_reader :access_token, :refresh_token, :expiry, :user_id
+  class Tokens
+    attr_reader :access_token, :client_token, :refresh_token, :expiry, :transaction_id, :user_id
 
-    def initialize(refresh_token, access_token=nil, expiry=nil, user_id=nil)
+    def initialize(refresh_token, access_token=nil, client_token=nil, expiry=nil, transaction_id=nil)
       @refresh_token = refresh_token
       @access_token = access_token
+      @client_token = client_token
       @expiry = expiry
-      @user_id = user_id
+      @transaction_id = transaction_id
+      @user_id = transaction_id
     end
 
-    def refresh!(access_token, expiry, user_id)
+    def refresh!(access_token, client_token, expiry, transaction_id)
       @access_token = access_token
+      @client_token = client_token
       @expiry = expiry
-      @user_id = user_id
+      @transaction_id = transaction_id
+      @user_id = transaction_id
     end
 
     def needs_refresh?
       @access_token.nil? || @expiry.nil? || @expiry < Time.now
+    end
+
+    def self.from_refresh(refresh_token)
+      Tokens.new(refresh_token)
     end
   end
 
@@ -72,17 +80,22 @@ module Berbix
       end
     end
 
-    def create_user(opts={})
+    def create_transaction(opts={})
       payload = {}
       payload[:email] = opts[:email] unless opts[:email].nil?
       payload[:phone] = opts[:phone] unless opts[:phone].nil?
       payload[:customer_uid] = opts[:customer_uid] unless opts[:customer_uid].nil?
-      fetch_tokens('/v0/users', payload)
+      fetch_tokens('/v0/transactions', payload)
     end
 
-    def refresh_tokens(user_tokens)
+    # This method is deprecated, please use create_transaction instead
+    def create_user(opts={})
+      create_transaction(opts)
+    end
+
+    def refresh_tokens(tokens)
       fetch_tokens('/v0/tokens', {
-        'refresh_token' => user_tokens.refresh_token,
+        'refresh_token' => tokens.refresh_token,
         'grant_type' => 'refresh_token',
       })
     end
@@ -94,28 +107,33 @@ module Berbix
       })
     end
 
-    def fetch_user(user_tokens)
-      token_auth_request(:get, user_tokens, '/v0/users')
+    def fetch_transaction(tokens)
+      token_auth_request(:get, tokens, '/v0/transactions')
     end
 
-    def create_continuation(user_tokens)
-      result = token_auth_request(:post, user_tokens, '/v0/continuations')
+    # This method is deprecated, please use fetch_transaction instead
+    def fetch_user(tokens)
+      fetch_transaction(tokens)
+    end
+
+    def create_continuation(tokens)
+      result = token_auth_request(:post, tokens, '/v0/continuations')
       result['value']
     end
 
     private
 
-    def refresh_if_necessary!(user_tokens)
-      if user_tokens.needs_refresh?
-        refreshed = refresh_tokens(user_tokens)
-        user_tokens.refresh!(refreshed.access_token, refreshed.expiry, refreshed.user_id)
+    def refresh_if_necessary!(tokens)
+      if tokens.needs_refresh?
+        refreshed = refresh_tokens(tokens)
+        tokens.refresh!(refreshed.access_token, refreshed.client_token, refreshed.expiry, refreshed.transaction_id)
       end
     end
 
-    def token_auth_request(method, user_tokens, path)
-      refresh_if_necessary!(user_tokens)
+    def token_auth_request(method, tokens, path)
+      refresh_if_necessary!(tokens)
       headers = {
-        'Authorization' => 'Bearer ' + user_tokens.access_token,
+        'Authorization' => 'Bearer ' + tokens.access_token,
         'Content-Type' => 'application/json',
       }
       @http_client.request(method, @api_host + path, headers)
@@ -129,11 +147,12 @@ module Berbix
         headers,
         data: payload,
         auth: auth())
-      UserTokens.new(
+      Tokens.new(
         result['refresh_token'],
         result['access_token'],
+        result['client_token'],
         Time.now + result['expires_in'],
-        result['user_id'])
+        result['transaction_id'])
     end
 
     def auth

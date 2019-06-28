@@ -7,7 +7,7 @@ client = Berbix::Client.new(
   api_host: ENV['BERBIX_DEMO_API_HOST'],
 )
 
-tokens = client.create_user(customer_uid: 'customer uid')
+tokens = client.create_transaction(customer_uid: 'customer uid')
 
 pp tokens
 
@@ -19,8 +19,8 @@ fetched = client.exchange_code(ENV['BERBIX_DEMO_CODE'])
 
 pp fetched
 
-to_refresh = Berbix::UserTokens.new(fetched.refresh_token)
+to_refresh = Berbix::Tokens.from_refresh(fetched.refresh_token)
 
-user = client.fetch_user(to_refresh)
+transaction = client.fetch_transaction(to_refresh)
 
-pp user
+pp transaction
