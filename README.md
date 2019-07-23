@@ -12,7 +12,7 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 
     require 'berbix'
 
-    // Construct the client, providing at least client_id and client_secret
+    # Construct the client, providing at least client_id and client_secret
     client = Berbix::Client.new(
       client_id: 'your_client_id_here',
       client_secret: 'your_client_secret_here',
@@ -22,7 +22,8 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 ### Create a transaction
 
     transaction_tokens = client.create_transaction(
-      customer_uid: 'internal_customer_uid', // ID for the user in client database
+      customer_uid: 'internal_customer_uid', # ID for the user in client database
+      template_key: 'your_template_key', # Template key for this transaction
     )
 
 ### Create tokens from refresh token
@@ -60,6 +61,7 @@ Supported options:
  * `email` - Previously verified email address for a user.
  * `phone` - Previously verified phone number for a user.
  * `customer_uid` - An ID or identifier for the user in your system.
+ * `template_key` - The template key for this transaction.
 
 ##### `fetch_transaction(tokens: Tokens): object`
 

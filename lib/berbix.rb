@@ -85,6 +85,7 @@ module Berbix
       payload[:email] = opts[:email] unless opts[:email].nil?
       payload[:phone] = opts[:phone] unless opts[:phone].nil?
       payload[:customer_uid] = opts[:customer_uid] unless opts[:customer_uid].nil?
+      payload[:template_key] = opts[:template_key] unless opts[:template_key].nil?
       fetch_tokens('/v0/transactions', payload)
     end
 
