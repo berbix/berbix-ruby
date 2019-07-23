@@ -3,6 +3,8 @@ require 'json'
 
 module Berbix
 
+  SDK_VERSION = '0.0.3'
+
   class HTTPClient
     def request(method, url, headers, opts={})
       raise 'subclass must implement request'
