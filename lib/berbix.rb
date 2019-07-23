@@ -138,12 +138,16 @@ module Berbix
       headers = {
         'Authorization' => 'Bearer ' + tokens.access_token,
         'Content-Type' => 'application/json',
+        'User-Agent' => 'BerbixRuby/' + SDK_VERSION,
       }
       @http_client.request(method, @api_host + path, headers)
     end
 
     def fetch_tokens(path, payload)
-      headers = { 'Content-Type' => 'application/json' }
+      headers = {
+        'Content-Type' => 'application/json',
+        'User-Agent' => 'BerbixRuby/' + SDK_VERSION,
+      }
       result = @http_client.request(
         :post,
         @api_host + path,
