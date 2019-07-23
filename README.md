@@ -65,7 +65,7 @@ Supported options:
 
 ##### `fetch_transaction(tokens: Tokens): object`
 
-Fetches all of the information associated with the transaction. If the user has already completed the steps of the transaction, then this will include all of the elements of the transaction payload as described on the (Berbix developer docs)[https://developers.berbix.com].
+Fetches all of the information associated with the transaction. If the user has already completed the steps of the transaction, then this will include all of the elements of the transaction payload as described on the [Berbix developer docs](https://developers.berbix.com).
 
 ##### `refresh_tokens(tokens: Tokens): void`
 
