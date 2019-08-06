@@ -4,6 +4,7 @@ require 'json'
 module Berbix
 
   SDK_VERSION = '0.0.3'
+  CLOCK_DRIFT = 300
 
   class HTTPClient
     def request(method, url, headers, opts={})
@@ -122,6 +123,24 @@ module Berbix
     def create_continuation(tokens)
       result = token_auth_request(:post, tokens, '/v0/continuations')
       result['value']
+    end
+
+    def validate_signature(secret, body, header)
+      parts = header.split(',')
+      # Version (parts[0]) is currently unused
+      timestamp = parts[1]
+      signature = parts[2]
+      if timestamp.to_i < Time.now.to_i - CLOCK_DRIFT
+        return false
+      end
+      digest = OpenSSL::Digest::SHA256.new
+      hmac = OpenSSL::HMAC.new(secret, digest)
+      hmac << timestamp
+      hmac << ','
+      hmac << secret
+      hmac << ','
+      hmac << body
+      hmac.hexdigest == signature
     end
 
     private
