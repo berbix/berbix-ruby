@@ -2,8 +2,7 @@ require 'pp'
 require_relative '../lib/berbix'
 
 client = Berbix::Client.new(
-  client_id: ENV['BERBIX_DEMO_CLIENT_ID'],
-  client_secret: ENV['BERBIX_DEMO_CLIENT_SECRET'],
+  api_secret: ENV['BERBIX_DEMO_CLIENT_SECRET'],
   api_host: ENV['BERBIX_DEMO_API_HOST'],
 )
 

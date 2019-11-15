@@ -70,16 +70,12 @@ module Berbix
 
   class Client
     def initialize(opts={})
-      @client_id = opts[:client_id]
-      @client_secret = opts[:client_secret]
+      @api_secret = opts[:api_secret] || opts[:client_secret]
       @api_host = api_host(opts)
       @http_client = opts[:http_client] || NetHTTPClient.new
 
-      if @client_id.nil?
-        raise ':client_id must be provided when instantiating Berbix client'
-      end
-      if @client_secret.nil?
-        raise ':client_secret must be provided when instantiating Berbix client'
+      if @api_secret.nil?
+        raise ':api_secret must be provided when instantiating Berbix client'
       end
     end
 
@@ -182,7 +178,7 @@ module Berbix
     end
 
     def auth
-      { user: @client_id, pass: @client_secret }
+      { user: @api_secret, pass: '' }
     end
 
     def api_host(opts)
