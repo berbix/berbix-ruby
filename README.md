@@ -14,8 +14,7 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 
     # Construct the client, providing at least client_id and client_secret
     client = Berbix::Client.new(
-      client_id: 'your_client_id_here',
-      client_secret: 'your_client_secret_here',
+      api_secret: 'your_api_secret_here',
       environment: :production,
     )
 
@@ -34,7 +33,7 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 ### Fetch transaction data
 
     transaction_data = client.fetch_transaction(transaction_tokens)
- 
+
 ## Reference
 
 ### `Client`
@@ -45,10 +44,9 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 
 Supported options:
 
- * `client_id` (required) - The client ID that can be found in your Berbix Dashboard.
- * `client_secret` (required) - The client secret that can be found in your Berbix Dashboard.
- * `environment` - Which environment the client uses, defaults to `:production`.
- * `http_client` - An optional override for the default HTTP client.
+- `api_secret` (required) - The API secret that can be found in your Berbix Dashboard.
+- `environment` - Which environment the client uses, defaults to `:production`.
+- `http_client` - An optional override for the default HTTP client.
 
 ##### `create_transaction(options): Tokens`
 
@@ -58,10 +56,10 @@ currently active user session.
 
 Supported options:
 
- * `email` - Previously verified email address for a user.
- * `phone` - Previously verified phone number for a user.
- * `customer_uid` - An ID or identifier for the user in your system.
- * `template_key` - The template key for this transaction.
+- `email` - Previously verified email address for a user.
+- `phone` - Previously verified phone number for a user.
+- `customer_uid` - An ID or identifier for the user in your system.
+- `template_key` - The template key for this transaction.
 
 ##### `fetch_transaction(tokens: Tokens): object`
 
