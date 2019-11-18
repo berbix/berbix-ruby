@@ -12,7 +12,7 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 
     require 'berbix'
 
-    # Construct the client, providing at least client_id and client_secret
+    # Construct the client, providing your API secret
     client = Berbix::Client.new(
       api_secret: 'your_api_secret_here',
       environment: :production,
