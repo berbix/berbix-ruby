@@ -3,7 +3,7 @@ require 'json'
 
 module Berbix
 
-  SDK_VERSION = '0.0.6'
+  SDK_VERSION = '0.0.7'
   CLOCK_DRIFT = 300
 
   class HTTPClient
