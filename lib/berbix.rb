@@ -17,6 +17,10 @@ module Berbix
       uri = URI(url)
       klass = if method == :post
         Net::HTTP::Post
+      elsif method == :patch
+        Net::HTTP::Patch
+      elsif method == :delete
+        Net::HTTP::Delete
       else
         Net::HTTP::Get
       end
@@ -34,6 +38,9 @@ module Berbix
       code = res.code.to_i
       if code < 200 || code >= 300
         raise 'unexpected status code returned'
+      end
+      if code == 204
+        return
       end
       JSON.parse(res.body)
     end
@@ -111,6 +118,24 @@ module Berbix
       token_auth_request(:get, tokens, '/v0/transactions')
     end
 
+    def delete_transaction(tokens)
+      token_auth_request(:delete, tokens, '/v0/transactions')
+    end
+
+    def update_transaction(tokens, opts={})
+      payload = {}
+      payload[:action] = opts[:action] unless opts[:action].nil?
+      payload[:note] = opts[:note] unless opts[:note].nil?
+      token_auth_request(:patch, tokens, '/v0/transactions', data: payload)
+    end
+
+    def override_transaction(tokens, opts={})
+      payload = {}
+      payload[:response_payload] = opts[:response_payload] unless opts[:response_payload].nil?
+      payload[:flags] = opts[:flags] unless opts[:flags].nil?
+      token_auth_request(:patch, tokens, '/v0/transactions/override', data: payload)
+    end
+
     # This method is deprecated, please use fetch_transaction instead
     def fetch_user(tokens)
       fetch_transaction(tokens)
@@ -148,14 +173,14 @@ module Berbix
       end
     end
 
-    def token_auth_request(method, tokens, path)
+    def token_auth_request(method, tokens, path, opts={})
       refresh_if_necessary!(tokens)
       headers = {
         'Authorization' => 'Bearer ' + tokens.access_token,
         'Content-Type' => 'application/json',
         'User-Agent' => 'BerbixRuby/' + SDK_VERSION,
       }
-      @http_client.request(method, @api_host + path, headers)
+      @http_client.request(method, @api_host + path, headers, opts)
     end
 
     def fetch_tokens(path, payload)
