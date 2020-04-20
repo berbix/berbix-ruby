@@ -48,7 +48,7 @@ Supported options:
 - `environment` - Which environment the client uses, defaults to `:production`.
 - `http_client` - An optional override for the default HTTP client.
 
-##### `create_transaction(options): Tokens`
+##### `create_transaction(options: object): Tokens`
 
 Creates a transaction within Berbix to initialize the client SDK. Typically after creating
 a transaction, you will want to store the refresh token in your database associated with the
@@ -69,6 +69,38 @@ Fetches all of the information associated with the transaction. If the user has 
 
 This is typically not needed to be called explicitly as it will be called by the higher-level
 SDK methods, but can be used to get fresh client or access tokens.
+
+##### `validate_signature(secret: string, body: string, header: string): boolean`
+
+This method validates that the content of the webhook has not been forged. This should be called for every endpoint that is configured to receive a webhook from Berbix.
+
+Parameters:
+
+- `secret` - This is the secret associated with that webhook. NOTE: This is distinct from the API secret and can be found on the webhook configuration page of the dashboard.
+- `body` - The full request body from the webhook. This should take the raw request body prior to parsing.
+- `header` - The value in the 'X-Berbix-Signature' header.
+
+##### `delete_transaction(tokens: Tokens): void`
+
+Permanently deletes all submitted data associated with the transaction corresponding to the tokens provided.
+
+##### `update_transaction(tokens: Tokens, options: object): object`
+
+Changes a transaction's "action", for example upon review in your systems. Returns the updated transaction upon success.
+
+Parameters:
+
+- `action: string` - Action taken on the transaction. Typically this will either be "accept" or "reject".
+- `note: string` - An optional note explaining the action taken.
+
+##### `override_transaction(tokens: Tokens, options: object): void`
+
+Completes a previously created transaction, and overrides its return payload and flags to match the provided parameters.
+
+Parameters:
+
+- `response_payload: string` - A string describing the payload type to return when fetching transaction metadata, e.g. "us-dl". See [our testing guide](https://docs.berbix.com/docs/testing) for possible options.
+- `flags: string[]` - An optional list of flags to associate with the transaction (independent of the payload's contents), e.g. ["id_under_18", "id_under_21"]. See [our flags documentation](https://docs.berbix.com/docs/id-flags) for a list of flags.
 
 ### `Tokens`
 
