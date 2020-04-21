@@ -13,6 +13,12 @@ module Berbix
   end
 
   class NetHTTPClient < HTTPClient
+    attr_reader :read_timeout
+
+    def initialize(opts={})
+      @read_timeout = opts[:read_timeout] || 10
+    end
+
     def request(method, url, headers, opts={})
       uri = URI(url)
       klass = if method == :post
@@ -33,6 +39,7 @@ module Berbix
       end
       cli = Net::HTTP.new(uri.host, uri.port).tap do |http|
         http.use_ssl = true
+        http.read_timeout = read_timeout
       end
       res = cli.request(req)
       code = res.code.to_i
