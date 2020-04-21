@@ -16,7 +16,7 @@ module Berbix
     attr_reader :read_timeout
 
     def initialize(opts={})
-      @read_timeout = opts[:read_timeout] || 10
+      @read_timeout = opts[:read_timeout] || 60
     end
 
     def request(method, url, headers, opts={})
