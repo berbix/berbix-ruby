@@ -14,8 +14,11 @@ module Berbix
 
   class NetHTTPClient < HTTPClient
     attr_reader :read_timeout
+    attr_reader :open_timeout
 
     def initialize(opts={})
+      # Sets the defaults to align with the Net::HTTP defaults
+      @open_timeout = opts[:open_timeout] || 60
       @read_timeout = opts[:read_timeout] || 60
     end
 
@@ -40,6 +43,7 @@ module Berbix
       cli = Net::HTTP.new(uri.host, uri.port).tap do |http|
         http.use_ssl = true
         http.read_timeout = read_timeout
+        http.open_timeout = open_timeout
       end
       res = cli.request(req)
       code = res.code.to_i
