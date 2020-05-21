@@ -2,7 +2,6 @@ require 'net/https'
 require 'json'
 
 module Berbix
-
   SDK_VERSION = '0.0.8'
   CLOCK_DRIFT = 300
 
@@ -48,7 +47,7 @@ module Berbix
       res = cli.request(req)
       code = res.code.to_i
       if code < 200 || code >= 300
-        raise 'unexpected status code returned'
+        raise(Berbix::BerbixError, 'unexpected status code returned')
       end
       if code == 204
         return
@@ -236,4 +235,6 @@ module Berbix
     end
   end
 
+  class BerbixError < StandardError
+  end
 end
