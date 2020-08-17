@@ -60,6 +60,8 @@ Supported options:
 - `phone` - Previously verified phone number for a user.
 - `customer_uid` - An ID or identifier for the user in your system.
 - `template_key` - The template key for this transaction.
+- `hosted_options` - Optional configuration object for creating hosted transactions.
+  - `completion_email` - Email address to which completion alerts will be sent for this transaction.
 
 ##### `fetch_transaction(tokens: Tokens): object`
 
@@ -121,6 +123,10 @@ This is the long-lived token that allows you to create new tokens after the shor
 ##### `transaction_id: number`
 
 The internal Berbix ID number associated with the transaction.
+
+##### `hosted_url: string`
+
+Represents the hosted transaction URL. This value will only be set when creating a transaction if the hosted_options field is set.
 
 ##### `expiry: Date`
 
