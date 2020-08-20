@@ -57,15 +57,16 @@ module Berbix
   end
 
   class Tokens
-    attr_reader :access_token, :client_token, :refresh_token, :expiry, :transaction_id, :user_id
+    attr_reader :access_token, :client_token, :refresh_token, :expiry, :transaction_id, :user_id, :hosted_url
 
-    def initialize(refresh_token, access_token=nil, client_token=nil, expiry=nil, transaction_id=nil)
+    def initialize(refresh_token, access_token=nil, client_token=nil, expiry=nil, transaction_id=nil, hosted_url=nil)
       @refresh_token = refresh_token
       @access_token = access_token
       @client_token = client_token
       @expiry = expiry
       @transaction_id = transaction_id
       @user_id = transaction_id
+      @hosted_url = hosted_url
     end
 
     def refresh!(access_token, client_token, expiry, transaction_id)
@@ -102,6 +103,7 @@ module Berbix
       payload[:phone] = opts[:phone] unless opts[:phone].nil?
       payload[:customer_uid] = opts[:customer_uid].to_s unless opts[:customer_uid].nil?
       payload[:template_key] = opts[:template_key] unless opts[:template_key].nil?
+      payload[:hosted_options] = opts[:hosted_options] unless opts[:hosted_options].nil?
       fetch_tokens('/v0/transactions', payload)
     end
 
@@ -209,7 +211,8 @@ module Berbix
         result['access_token'],
         result['client_token'],
         Time.now + result['expires_in'],
-        result['transaction_id'])
+        result['transaction_id'],
+        result['hosted_url'])
     end
 
     def auth
