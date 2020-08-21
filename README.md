@@ -124,9 +124,13 @@ This is the long-lived token that allows you to create new tokens after the shor
 
 The internal Berbix ID number associated with the transaction.
 
-##### `hosted_url: string`
+##### `response: object`
 
-Represents the hosted transaction URL. This value will only be set when creating a transaction if the hosted_options field is set.
+The raw response object. This may include some non-token related fields.
+
+###### `hosted_url: string`
+
+This is a member of the response object. Represents the hosted transaction URL. This value will only be set when creating a transaction if the `hosted_options` field is set.
 
 ##### `expiry: Date`
 
