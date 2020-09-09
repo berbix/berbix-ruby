@@ -105,6 +105,10 @@ Parameters:
 - `flags: string[]` - An optional list of flags to associate with the transaction (independent of the payload's contents), e.g. `["id_under_18", "id_under_21"]`. See [our flags documentation](https://docs.berbix.com/docs/id-flags) for a list of flags.
 - `override_fields: { string => string }` - An optional mapping from a [transaction field](https://docs.berbix.com/reference#gettransactionmetadata) to the desired override value, e.g. `{ :override_fields => { "date_of_birth" => "2000-12-09" } }`
 
+Full Example:
+
+`client.override_transaction(@transaction_tokens, {:response_payload => "us-dl", :flags => ['id_under_21'], :override_fields => { "date_of_birth" => "2000-12-09" }})`
+
 ### `Tokens`
 
 #### Properties
