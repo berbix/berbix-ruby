@@ -145,6 +145,7 @@ module Berbix
       payload = {}
       payload[:response_payload] = opts[:response_payload] unless opts[:response_payload].nil?
       payload[:flags] = opts[:flags] unless opts[:flags].nil?
+      payload[:override_fields] = opts[:override_fields] unless opts[:override_fields].nil?
       token_auth_request(:patch, tokens, '/v0/transactions/override', data: payload)
     end
 
