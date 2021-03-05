@@ -7,7 +7,7 @@ module Berbix
 
   class HTTPClient
     def request(method, url, headers, opts={})
-      raise 'subclass must implement request'
+      raise(Berbix::BerbixError, 'subclass must implement request')
     end
   end
 
@@ -100,7 +100,7 @@ module Berbix
       @http_client = opts[:http_client] || NetHTTPClient.new
 
       if @api_secret.nil?
-        raise ':api_secret must be provided when instantiating Berbix client'
+        raise(Berbix::BerbixError, ':api_secret must be provided when instantiating Berbix client')
       end
     end
 
@@ -110,7 +110,7 @@ module Berbix
       payload[:phone] = opts[:phone] unless opts[:phone].nil?
       payload[:customer_uid] = opts[:customer_uid].to_s unless opts[:customer_uid].nil?
       if opts[:template_key].nil?
-        raise ':template_key must be provided when creating a transaction'
+        raise(Berbix::BerbixError, ':template_key must be provided when creating a transaction')
       else
         payload[:template_key] = opts[:template_key]
       end
@@ -119,21 +119,8 @@ module Berbix
     end
 
     def create_hosted_transaction(opts={})
-      payload = {}
-      payload[:email] = opts[:email] unless opts[:email].nil?
-      payload[:phone] = opts[:phone] unless opts[:phone].nil?
-      payload[:customer_uid] = opts[:customer_uid].to_s unless opts[:customer_uid].nil?
-      if opts[:template_key].nil?
-        raise ':template_key must be provided when creating a transaction'
-      else
-        payload[:template_key] = opts[:template_key]
-      end
-      if opts[:hosted_options].nil?
-        payload[:hosted_options] = {}
-      else
-        payload[:hosted_options] = opts[:hosted_options]
-      end
-      tokens = fetch_tokens('/v0/transactions', payload)
+      opts[:hosted_options] = {} if opts[:hosted_options].nil?
+      tokens = create_transaction(opts)
       HostedTransactionResponse.new(tokens, tokens.response["hosted_url"])
     end
 
