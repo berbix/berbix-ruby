@@ -47,7 +47,7 @@ module Berbix
       res = cli.request(req)
       code = res.code.to_i
       if code < 200 || code >= 300
-        raise(Berbix::BerbixError, 'unexpected status code returned')
+        raise(Berbix::BerbixError, "unexpected status code returned: #{code}")
       end
       if code == 204
         return
@@ -105,6 +105,17 @@ module Berbix
       fetch_tokens('/v0/transactions', payload)
     end
 
+    def create_hosted_transaction(opts={})
+      payload = {}
+      payload[:email] = opts[:email] unless opts[:email].nil?
+      payload[:phone] = opts[:phone] unless opts[:phone].nil?
+      payload[:customer_uid] = opts[:customer_uid].to_s unless opts[:customer_uid].nil?
+      payload[:template_key] = opts[:template_key] unless opts[:template_key].nil?
+      payload[:hosted_options] = {}
+      payload[:hosted_options] = opts[:hosted_options] unless opts[:hosted_options].nil?
+      fetch_tokens('/v0/transactions', payload)
+    end
+
     def refresh_tokens(tokens)
       fetch_tokens('/v0/tokens', {
         'refresh_token' => tokens.refresh_token,
@@ -133,11 +144,6 @@ module Berbix
       payload[:flags] = opts[:flags] unless opts[:flags].nil?
       payload[:override_fields] = opts[:override_fields] unless opts[:override_fields].nil?
       token_auth_request(:patch, tokens, '/v0/transactions/override', data: payload)
-    end
-
-    def create_continuation(tokens)
-      result = token_auth_request(:post, tokens, '/v0/continuations')
-      result['value']
     end
 
     def validate_signature(secret, body, header)
@@ -208,7 +214,7 @@ module Berbix
         return 'https://api.berbix.com'
       end
     end
-    
+
   end
 
   class BerbixError < StandardError
