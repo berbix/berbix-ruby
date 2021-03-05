@@ -14,8 +14,7 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 
     # Construct the client, providing your API secret
     client = Berbix::Client.new(
-      api_secret: 'your_api_secret_here',
-      environment: :production,
+      api_secret: 'your_api_secret_here'
     )
 
 ### Create a transaction
@@ -45,7 +44,7 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 Supported options:
 
 - `api_secret` (required) - The API secret that can be found in your Berbix Dashboard.
-- `environment` - Which environment the client uses, defaults to `:production`.
+- `api_host` - Which API server the client uses, defaults to `https://api.berbix.com`.
 - `http_client` - An optional override for the default HTTP client.
 
 ##### `create_transaction(options: object): Tokens`

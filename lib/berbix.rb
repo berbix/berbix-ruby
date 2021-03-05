@@ -202,22 +202,13 @@ module Berbix
     end
 
     def api_host(opts)
-      unless opts[:api_host].nil?
+      if !opts[:api_host].nil?
         return opts[:api_host]
-      end
-
-      opts[:environment] ||= :production
-      case opts[:environment]
-      when :production
-        return 'https://api.berbix.com'
-      when :staging
-        return 'https://api.staging.berbix.com'
-      when :sandbox
-        return 'https://api.sandbox.berbix.com'
       else
-        raise 'invalid environment value specified';
+        return 'https://api.berbix.com'
       end
     end
+    
   end
 
   class BerbixError < StandardError
