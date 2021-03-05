@@ -84,6 +84,15 @@ module Berbix
     end
   end
 
+  class HostedTransactionResponse
+    attr_reader :tokens, :hosted_url
+
+    def initialize(tokens, hosted_url)
+      @tokens = tokens
+      @hosted_url = hosted_url
+    end
+  end
+
   class Client
     def initialize(opts={})
       @api_secret = opts[:api_secret] || opts[:client_secret]
@@ -111,9 +120,13 @@ module Berbix
       payload[:phone] = opts[:phone] unless opts[:phone].nil?
       payload[:customer_uid] = opts[:customer_uid].to_s unless opts[:customer_uid].nil?
       payload[:template_key] = opts[:template_key] unless opts[:template_key].nil?
-      payload[:hosted_options] = {}
-      payload[:hosted_options] = opts[:hosted_options] unless opts[:hosted_options].nil?
-      fetch_tokens('/v0/transactions', payload)
+      if opts[:hosted_options].nil?
+        payload[:hosted_options] = {}
+      else
+        payload[:hosted_options] = opts[:hosted_options]
+      end
+      tokens = fetch_tokens('/v0/transactions', payload)
+      HostedTransactionResponse.new(tokens, tokens.response["hosted_url"])
     end
 
     def refresh_tokens(tokens)
