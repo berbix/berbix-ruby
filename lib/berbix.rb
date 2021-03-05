@@ -108,7 +108,11 @@ module Berbix
       payload = {}
       payload[:email] = opts[:email] unless opts[:email].nil?
       payload[:phone] = opts[:phone] unless opts[:phone].nil?
-      payload[:customer_uid] = opts[:customer_uid].to_s unless opts[:customer_uid].nil?
+      if opts[:customer_uid].nil?
+        raise(Berbix::BerbixError, ':customer_uid must be provided when creating a transaction')
+      else
+        payload[:customer_uid] = opts[:customer_uid].to_s 
+      end
       if opts[:template_key].nil?
         raise(Berbix::BerbixError, ':template_key must be provided when creating a transaction')
       else
