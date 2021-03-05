@@ -65,7 +65,6 @@ module Berbix
       @client_token = client_token
       @expiry = expiry
       @transaction_id = transaction_id
-      @user_id = transaction_id
       @response = response
     end
 
@@ -74,7 +73,6 @@ module Berbix
       @client_token = client_token
       @expiry = expiry
       @transaction_id = transaction_id
-      @user_id = transaction_id
     end
 
     def needs_refresh?
@@ -107,22 +105,10 @@ module Berbix
       fetch_tokens('/v0/transactions', payload)
     end
 
-    # This method is deprecated, please use create_transaction instead
-    def create_user(opts={})
-      create_transaction(opts)
-    end
-
     def refresh_tokens(tokens)
       fetch_tokens('/v0/tokens', {
         'refresh_token' => tokens.refresh_token,
         'grant_type' => 'refresh_token',
-      })
-    end
-
-    def exchange_code(code)
-      fetch_tokens('/v0/tokens', {
-        'code' => code,
-        'grant_type' => 'authorization_code',
       })
     end
 
@@ -147,11 +133,6 @@ module Berbix
       payload[:flags] = opts[:flags] unless opts[:flags].nil?
       payload[:override_fields] = opts[:override_fields] unless opts[:override_fields].nil?
       token_auth_request(:patch, tokens, '/v0/transactions/override', data: payload)
-    end
-
-    # This method is deprecated, please use fetch_transaction instead
-    def fetch_user(tokens)
-      fetch_transaction(tokens)
     end
 
     def create_continuation(tokens)
