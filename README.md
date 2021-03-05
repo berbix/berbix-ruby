@@ -44,7 +44,6 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 Supported options:
 
 - `api_secret` (required) - The API secret that can be found in your Berbix Dashboard.
-- `api_host` - Which API server the client uses, defaults to `https://api.berbix.com`.
 - `http_client` - An optional override for the default HTTP client.
 
 ##### `create_transaction(options: object): Tokens`
