@@ -216,11 +216,7 @@ module Berbix
     end
 
     def api_host(opts)
-      if !opts[:api_host].nil?
-        return opts[:api_host]
-      else
-        return 'https://api.berbix.com'
-      end
+      opts[:api_host].nil? ? 'https://api.berbix.com' : opts[:api_host]
     end
 
   end
