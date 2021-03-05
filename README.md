@@ -61,6 +61,11 @@ Supported options:
 - `hosted_options` - Optional configuration object for creating hosted transactions.
   - `completion_email` - Email address to which completion alerts will be sent for this transaction.
 
+##### `create_hosted_transaction(options): HostedTransactionResponse`
+
+Creates a hosted transaction within Berbix to initialize the client SDK. This works the same as `create_transaction` except
+that it returns an explicit `hosted_url` for hosted transactions.
+
 ##### `fetch_transaction(tokens: Tokens): object`
 
 Fetches all of the information associated with the transaction. If the user has already completed the steps of the transaction, then this will include all of the elements of the transaction payload as described on the [Berbix developer docs](https://developers.berbix.com).
@@ -138,6 +143,18 @@ This is a member of the response object. Represents the hosted transaction URL. 
 ##### `expiry: Date`
 
 The time at which the access and client tokens will expire.
+
+### HostedTransactionResponse
+
+#### Properties
+
+##### `tokens: Tokens`
+
+This is the tokens object for future SDK calls.
+
+###### `hosted_url: string`
+
+This is a member of the response object. Represents the hosted transaction URL.
 
 #### Static methods
 
