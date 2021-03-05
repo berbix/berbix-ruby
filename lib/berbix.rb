@@ -109,7 +109,11 @@ module Berbix
       payload[:email] = opts[:email] unless opts[:email].nil?
       payload[:phone] = opts[:phone] unless opts[:phone].nil?
       payload[:customer_uid] = opts[:customer_uid].to_s unless opts[:customer_uid].nil?
-      payload[:template_key] = opts[:template_key] unless opts[:template_key].nil?
+      if opts[:template_key].nil?
+        raise ':template_key must be provided when creating a transaction'
+      else
+        payload[:template_key] = opts[:template_key]
+      end
       payload[:hosted_options] = opts[:hosted_options] unless opts[:hosted_options].nil?
       fetch_tokens('/v0/transactions', payload)
     end
@@ -119,7 +123,11 @@ module Berbix
       payload[:email] = opts[:email] unless opts[:email].nil?
       payload[:phone] = opts[:phone] unless opts[:phone].nil?
       payload[:customer_uid] = opts[:customer_uid].to_s unless opts[:customer_uid].nil?
-      payload[:template_key] = opts[:template_key] unless opts[:template_key].nil?
+      if opts[:template_key].nil?
+        raise ':template_key must be provided when creating a transaction'
+      else
+        payload[:template_key] = opts[:template_key]
+      end
       if opts[:hosted_options].nil?
         payload[:hosted_options] = {}
       else
