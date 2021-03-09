@@ -60,6 +60,7 @@ Supported options:
 - `template_key` - The template key for this transaction.
 - `hosted_options` - Optional configuration object for creating hosted transactions.
   - `completion_email` - Email address to which completion alerts will be sent for this transaction.
+  - `redirect_url` - URL to redirect the user to after they complete the transaction. If not specified, the URL specified in the Berbix dashboard will be used instead.
 
 ##### `create_hosted_transaction(options): HostedTransactionResponse`
 
