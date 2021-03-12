@@ -2,12 +2,12 @@ require 'net/https'
 require 'json'
 
 module Berbix
-  SDK_VERSION = '0.0.11'
+  SDK_VERSION = '1.0.0'
   CLOCK_DRIFT = 300
 
   class HTTPClient
     def request(method, url, headers, opts={})
-      raise 'subclass must implement request'
+      raise(Berbix::BerbixError, 'subclass must implement request')
     end
   end
 
@@ -47,7 +47,7 @@ module Berbix
       res = cli.request(req)
       code = res.code.to_i
       if code < 200 || code >= 300
-        raise(Berbix::BerbixError, 'unexpected status code returned')
+        raise(Berbix::BerbixError, "unexpected status code returned: #{code}")
       end
       if code == 204
         return
@@ -65,7 +65,6 @@ module Berbix
       @client_token = client_token
       @expiry = expiry
       @transaction_id = transaction_id
-      @user_id = transaction_id
       @response = response
     end
 
@@ -74,7 +73,6 @@ module Berbix
       @client_token = client_token
       @expiry = expiry
       @transaction_id = transaction_id
-      @user_id = transaction_id
     end
 
     def needs_refresh?
@@ -86,6 +84,15 @@ module Berbix
     end
   end
 
+  class HostedTransactionResponse
+    attr_reader :tokens, :hosted_url
+
+    def initialize(tokens, hosted_url)
+      @tokens = tokens
+      @hosted_url = hosted_url
+    end
+  end
+
   class Client
     def initialize(opts={})
       @api_secret = opts[:api_secret] || opts[:client_secret]
@@ -93,7 +100,7 @@ module Berbix
       @http_client = opts[:http_client] || NetHTTPClient.new
 
       if @api_secret.nil?
-        raise ':api_secret must be provided when instantiating Berbix client'
+        raise(Berbix::BerbixError, ':api_secret must be provided when instantiating Berbix client')
       end
     end
 
@@ -101,28 +108,30 @@ module Berbix
       payload = {}
       payload[:email] = opts[:email] unless opts[:email].nil?
       payload[:phone] = opts[:phone] unless opts[:phone].nil?
-      payload[:customer_uid] = opts[:customer_uid].to_s unless opts[:customer_uid].nil?
-      payload[:template_key] = opts[:template_key] unless opts[:template_key].nil?
+      if opts[:customer_uid].nil?
+        raise(Berbix::BerbixError, ':customer_uid must be provided when creating a transaction')
+      else
+        payload[:customer_uid] = opts[:customer_uid].to_s 
+      end
+      if opts[:template_key].nil?
+        raise(Berbix::BerbixError, ':template_key must be provided when creating a transaction')
+      else
+        payload[:template_key] = opts[:template_key]
+      end
       payload[:hosted_options] = opts[:hosted_options] unless opts[:hosted_options].nil?
       fetch_tokens('/v0/transactions', payload)
     end
 
-    # This method is deprecated, please use create_transaction instead
-    def create_user(opts={})
-      create_transaction(opts)
+    def create_hosted_transaction(opts={})
+      opts[:hosted_options] = {} if opts[:hosted_options].nil?
+      tokens = create_transaction(opts)
+      HostedTransactionResponse.new(tokens, tokens.response["hosted_url"])
     end
 
     def refresh_tokens(tokens)
       fetch_tokens('/v0/tokens', {
         'refresh_token' => tokens.refresh_token,
         'grant_type' => 'refresh_token',
-      })
-    end
-
-    def exchange_code(code)
-      fetch_tokens('/v0/tokens', {
-        'code' => code,
-        'grant_type' => 'authorization_code',
       })
     end
 
@@ -147,16 +156,6 @@ module Berbix
       payload[:flags] = opts[:flags] unless opts[:flags].nil?
       payload[:override_fields] = opts[:override_fields] unless opts[:override_fields].nil?
       token_auth_request(:patch, tokens, '/v0/transactions/override', data: payload)
-    end
-
-    # This method is deprecated, please use fetch_transaction instead
-    def fetch_user(tokens)
-      fetch_transaction(tokens)
-    end
-
-    def create_continuation(tokens)
-      result = token_auth_request(:post, tokens, '/v0/continuations')
-      result['value']
     end
 
     def validate_signature(secret, body, header)
@@ -221,22 +220,9 @@ module Berbix
     end
 
     def api_host(opts)
-      unless opts[:api_host].nil?
-        return opts[:api_host]
-      end
-
-      opts[:environment] ||= :production
-      case opts[:environment]
-      when :production
-        return 'https://api.berbix.com'
-      when :staging
-        return 'https://api.staging.berbix.com'
-      when :sandbox
-        return 'https://api.sandbox.berbix.com'
-      else
-        raise 'invalid environment value specified';
-      end
+      opts[:api_host].nil? ? 'https://api.berbix.com' : opts[:api_host]
     end
+
   end
 
   class BerbixError < StandardError

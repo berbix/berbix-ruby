@@ -14,8 +14,7 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 
     # Construct the client, providing your API secret
     client = Berbix::Client.new(
-      api_secret: 'your_api_secret_here',
-      environment: :production,
+      api_secret: 'your_api_secret_here'
     )
 
 ### Create a transaction
@@ -45,7 +44,6 @@ This Berbix Ruby library provides simple interfaces to interact with the Berbix 
 Supported options:
 
 - `api_secret` (required) - The API secret that can be found in your Berbix Dashboard.
-- `environment` - Which environment the client uses, defaults to `:production`.
 - `http_client` - An optional override for the default HTTP client.
 
 ##### `create_transaction(options: object): Tokens`
@@ -62,6 +60,12 @@ Supported options:
 - `template_key` - The template key for this transaction.
 - `hosted_options` - Optional configuration object for creating hosted transactions.
   - `completion_email` - Email address to which completion alerts will be sent for this transaction.
+  - `redirect_url` - URL to redirect the user to after they complete the transaction. If not specified, the URL specified in the Berbix dashboard will be used instead.
+
+##### `create_hosted_transaction(options): HostedTransactionResponse`
+
+Creates a hosted transaction within Berbix to initialize the client SDK. This works the same as `create_transaction` except
+that it returns an explicit `hosted_url` for hosted transactions.
 
 ##### `fetch_transaction(tokens: Tokens): object`
 
@@ -140,6 +144,18 @@ This is a member of the response object. Represents the hosted transaction URL. 
 ##### `expiry: Date`
 
 The time at which the access and client tokens will expire.
+
+### HostedTransactionResponse
+
+#### Properties
+
+##### `tokens: Tokens`
+
+This is the tokens object for future SDK calls.
+
+###### `hosted_url: string`
+
+This is a member of the response object. Represents the hosted transaction URL.
 
 #### Static methods
 

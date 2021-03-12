@@ -2,24 +2,13 @@ require 'pp'
 require_relative '../lib/berbix'
 
 client = Berbix::Client.new(
-  api_secret: ENV['BERBIX_DEMO_CLIENT_SECRET'],
-  api_host: ENV['BERBIX_DEMO_API_HOST'],
+  client_secret: ENV['BERBIX_DEMO_CLIENT_SECRET'],
 )
 
-tokens = client.create_transaction(customer_uid: 'customer uid')
+tokens = client.create_transaction(customer_uid: 'ADD_UID_HERE', template_key: 'tpk_ADD_TEMPLATE_KEY_HERE')
 
 pp tokens
 
-continuation = client.create_continuation(tokens)
+hosted_transaction = client.create_hosted_transaction(customer_uid: 'ADD_UID_HERE', template_key: 'tpk_ADD_TEMPLATE_KEY_HERE', :hosted_options => {:completion_email => "ADD_EMAIL_HERE"})
 
-pp continuation
-
-fetched = client.exchange_code(ENV['BERBIX_DEMO_CODE'])
-
-pp fetched
-
-to_refresh = Berbix::Tokens.from_refresh(fetched.refresh_token)
-
-transaction = client.fetch_transaction(to_refresh)
-
-pp transaction
+pp hosted_transaction.hosted_url
